@@ -8,19 +8,74 @@
     "dist"
   ],
   "scripts": {
-    "clean": "rm -rf dist coverage tsconfig.tsbuildinfo .eslintcache",
-    "lint": "yarn prettier && yarn eslint",
-    "lint:fix": "yarn prettier:fix && yarn eslint:fix",
+    "clean": "rm -rf dist coverage tsconfig.tsbuildinfo .eslintcache .wireit",
+    "lint": "wireit",
+    "lint:fix": "wireit",
     "eslint": "eslint '{src,test}/**/*.ts' --cache",
     "eslint:fix": "yarn eslint --fix",
     "prettier": "prettier --list-different \"**/*.{js,ts,md,yml,json,html}\"",
     "prettier:fix": "prettier --write \"**/*.{js,ts,md,yml,json,html}\"",
-    "build": "tsc --build",
-    "test": "jest",
-    "coverage": "jest --coverage",
+    "build": "wireit",
+    "test": "wireit",
+    "coverage": "wireit",
     "prepare": "husky install",
     "prepack": "yarn clean && yarn test && yarn build",
     "spellcheck": "npx --yes cspell --show-context --show-suggestions '**/*.*'"
+  },
+  "wireit": {
+    "build": {
+      "command": "tsc --build",
+      "files": [
+        "src/**/*.ts",
+        "tsconfig.json"
+      ],
+      "output": [
+        "dist/**",
+        "tsconfig.tsbuildinfo"
+      ],
+      "packageLocks": [
+        "yarn.lock"
+      ],
+      "clean": "if-file-deleted"
+    },
+    "test": {
+      "command": "jest",
+      "files": [
+        "{src,test}/**/*.ts",
+        "tsconfig.json",
+        "jest.*.js"
+      ],
+      "output": [],
+      "packageLocks": [
+        "yarn.lock"
+      ]
+    },
+    "coverage": {
+      "command": "jest --coverage",
+      "files": [
+        "{src,test}/**/*.ts",
+        "tsconfig.json",
+        "jest.*.js"
+      ],
+      "output": [
+        "coverage/**"
+      ],
+      "packageLocks": [
+        "yarn.lock"
+      ]
+    },
+    "lint": {
+      "dependencies": [
+        "prettier",
+        "eslint"
+      ]
+    },
+    "lint:fix": {
+      "dependencies": [
+        "prettier:fix",
+        "eslint:fix"
+      ]
+    }
   },
   "repository": {
     "type": "git",
@@ -80,6 +135,7 @@
     "supertest": "6.3.3",
     "ts-jest": "29.0.5",
     "typescript": "4.9.5",
+    "wireit": "0.9.5",
     "ws": "8.12.1"
   },
   "dependencies": {
